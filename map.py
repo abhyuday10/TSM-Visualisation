@@ -1,5 +1,4 @@
 import plotly.graph_objects as go
-from points import places
 import geocoder
 import math
 
@@ -58,7 +57,7 @@ class MapGenerator:
     Function that renders the specified locations onto the map
     """
 
-    def renderLocations(locations):
+    def renderLocations(self, locations):
         names = []
         latitudes = []
         longitudes = []
@@ -90,11 +89,3 @@ class MapGenerator:
         )
 
         fig.show()
-
-
-locs = ["kelseys", "the fat pug", "the town house", "the old library"]
-gen = MapGenerator(locs)
-locs = gen.decodeLocations()
-print(locs[0].distanceTo(locs[1]))
-MapGenerator.renderLocations(locs)
-
