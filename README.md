@@ -29,12 +29,13 @@ locations = generator.decodeLocations()
 You may do all calculations using these objects
 
 Location objects
-| Attribute     | Meaning        |
-| ------------- |-------------|
-| name          | Location Name |
-| latitude      | Latitude      |
-| longitude     | Longitude     |
-| distanceTo()  | Distance to another location object in metres      |
+
+| Attribute    | Meaning                                       |
+| ------------ | --------------------------------------------- |
+| name         | Location Name                                 |
+| latitude     | Latitude                                      |
+| longitude    | Longitude                                     |
+| distanceTo() | Distance to another location object in metres |
 
 To render them on a map, specify the location objects to render, in the order required
 ```python
