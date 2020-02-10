@@ -1,6 +1,11 @@
 # TSM-Visualisation
 Visualising the TSM problem in the context of local pubs.
 
+# Genetic_algorithm
+```
+Call this function to run the code
+```
+
 ## Installing dependencies
 ```
 git clone https://github.com/abhyuday10/TSM-Visualisation
