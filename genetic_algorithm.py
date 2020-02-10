@@ -7,12 +7,14 @@ import seaborn as sb
 from map import *
 import time
 
-no_of_generations = 250
-lower_limit = 0.2
+
+no_of_generations = 100
+lower_limit = 0.1
 N = 10
-pop_size = 200
-how_many_to_kill = 50
-prob_mut = 0.00001
+pop_size = 100
+how_many_to_kill = 75
+prob_mut = 0.0001
+
 
 
 def initialise_map(lower_limit):
@@ -25,7 +27,7 @@ def initialise_map(lower_limit):
 
     for i in range(0, N):
         for j in range(0, i):  # do not include i since the diagonal is zero
-            our_map[i][j] = random.random() * 10000
+            our_map[i][j] = random.random() * 100
             our_map[j][i] = our_map[i][j]
 
     return our_map
@@ -45,38 +47,37 @@ def create_new_route():
 
 
 def crossover(a, b):
-    crossover_point = randint(1, N - 1)
+    c = []
 
-    index_a = 0
-    index_b = 0
+    for i in range(1, N - 2):
+        if (a[i] == b[i]):
+            c.append(i)
 
-    for i in range(0, N):
-        if (a == crossover_point)[i] == True:
-            index_a = i
-        if (b == crossover_point)[i] == True:
-            index_b = i
+    if c != []:
 
-    a_head = a[:index_a]
-    a_tail = b[index_a:]
+        index = c[0]
 
-    new_a = np.append(a_head, a_tail)
+        while (index == c[0]):
+            index = random.randint(1, N - 2)
 
-    b_head = b[:index_b]
-    b_tail = a[index_b:]
+        temp = a[c[0]]
+        a[c[0]] = a[index]
+        a[index] = temp
 
-    new_b = np.append(b_head, b_tail)
+        while (index == c[0]):
+            index = random.randint(1, N - 2)
 
-    child = []
-    if (len(new_a) >= N):
-        child = new_a
+        temp = b[c[0]]
+        b[c[0]] = b[index]
+        b[index] = temp
 
-    return child
+    return (a, b)
 
 
-def mutate(a, prob):
-    if random.random() > prob:
-        i = random.randint(1, len(a) - 2)
-        j = random.randint(1, len(a) - 2)
+def mutate(a, prob_mut):
+    if random.random() > prob_mut:
+        i = random.randint(1, N - 2)
+        j = random.randint(1, N - 2)
 
         temp = a[i]
         a[i] = a[j]
@@ -112,6 +113,14 @@ def score_population(population, our_map):
     return scores
 
 
+def sort_population(population, our_map):
+    scores = score_population(population, our_map)
+
+    np_scores = np.array(scores)
+
+    return np_scores.argsort()
+
+
 def best_in_population(population, our_map):
     best = sort_population(population, our_map)[0]
     best_route = population[best]
@@ -125,39 +134,39 @@ def fitness_of_best_in_population(population, our_map):
     return fit
 
 
-def sort_population(population, our_map):
-    scores = score_population(population, our_map)
-
-    np_scores = np.array(scores)
-
-    return np_scores.argsort()
-
-
 def thanos(how_many_to_kill, population, our_map):
     ranked_pop = sort_population(population, our_map)
     survival_of_the_fittest = ranked_pop[: (len(population) - how_many_to_kill)]
 
-    return survival_of_the_fittest
+    return np.array(survival_of_the_fittest)
 
 
 def fuck(population, our_map):
     fittest = thanos(how_many_to_kill, population, our_map)
     children = []
 
-    for i in range(0, len(fittest), 2):
-        child_1 = crossover(population[i], population[i + 1])
+    keep = 4
+
+    for i in range(0, 4):
+        children.append(population[fittest[i]])
+
+    for i in range(4, len(fittest) - 1, 2):
+        child_1 = crossover(population[fittest[i]], population[fittest[i + 1]])[0]
+        child_2 = crossover(population[fittest[i]], population[fittest[i + 1]])[1]
         child_1 = mutate(child_1, prob_mut)
+        child_2 = mutate(child_2, prob_mut)
         children.append(child_1)
+        children.append(child_2)
 
     while (len(children) < pop_size):
         new_route = create_new_route()
         children.append(new_route)
 
-    return children
+    return np.array(children)
 
 
 def main():
-    # our_map = initialise_map(lower_limit)
+    #our_map = initialise_map(lower_limit)
     names_of_locations_temp = ["kelseys", "the fat pug", "the town house", "the old library", "the clarendon",
                                "the benjamin satchwell", "murphy's bar", "The Royal Pug", "the white house",
                                "The Drawing Board"]
@@ -172,8 +181,6 @@ def main():
         object_to_num[location_object] = counter
 
     our_map = generator.adjacency_matrix_generator()
-    #
-
     population = create_generation(pop_size, our_map)
 
     route_over_time = []
@@ -183,23 +190,18 @@ def main():
         route_over_time.append(best_in_population(population, our_map))
         fitnesses.append(fitness_of_best_in_population(population, our_map))
         fuck(population, our_map)
-
         population = fuck(population, our_map)
 
-    for i, current_route in enumerate(route_over_time):
-        print(i, current_route)
-    for current_route in route_over_time[-10:]:
+    last_locations_to_render = None
+    for current_route in route_over_time[:50]:
         locations_to_render = [num_to_object[x] for x in current_route]
-        generator.renderLocations(locations_to_render)
-        time.sleep(3)
+        if locations_to_render != last_locations_to_render:
+           generator.renderLocations(locations_to_render)
+        last_locations_to_render = locations_to_render
 
-
-    plt.plot(np.arange(0, no_of_generations), fitnesses)
+    plt.plot(list(range(no_of_generations)), fitnesses)
     plt.ylabel('fitness')
     plt.xlabel('no. of generations')
-
+    plt.show()
 
 main()
-#Test commit
-#Test commit 2
-#Test commit 3
