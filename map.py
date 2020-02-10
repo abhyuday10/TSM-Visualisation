@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import geocoder
 import math
+import numpy as np
 
 RESTRICTEDTO = "Leamington Spa"
 
@@ -12,7 +13,7 @@ class Location:
         self.name = name
 
     """Returns distance to location in meters
-    
+
     Returns:
         Distance -- in meters
     """
@@ -27,8 +28,8 @@ class Location:
         dlambda = math.radians(lon2 - lon1)
 
         a = (
-            math.sin(dphi / 2) ** 2
-            + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
+                math.sin(dphi / 2) ** 2
+                + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
         )
 
         return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
@@ -40,7 +41,7 @@ class MapGenerator:
 
     """
     Function that geocodes and returns a list of Location objects from their names
-    
+
     Returns:
         [Location object]
     """
@@ -49,6 +50,7 @@ class MapGenerator:
         self.locations = []
         for name in self.names:
             g = geocoder.osm(name + ", " + RESTRICTEDTO)
+            assert len(g) == 1, "This location is not in Leamington Spa: " + str(name)
             latitude, longitude = g.latlng[0], g.latlng[1]
             self.locations.append(Location(name, latitude, longitude))
         return self.locations
@@ -89,3 +91,14 @@ class MapGenerator:
         )
 
         fig.show()
+
+    def adjacency_matrix_generator(self):
+        adjacency_matrix = np.zeros((len(self.locations), len(self.locations)))
+        for i, place_1 in enumerate(self.locations):
+            for j, place_2 in enumerate(self.locations):
+                if place_1.name == place_2.name:
+                    adjacency_matrix[i][j] = 0
+                else:
+                    adjacency_matrix[i][j] = (place_1.distanceTo(place_2))
+                    adjacency_matrix[j][i] = adjacency_matrix[i][j]
+        return adjacency_matrix
