@@ -186,11 +186,14 @@ def main():
 
         population = fuck(population, our_map)
 
-    for current_route in route_over_time[0:10]:
+    for i, current_route in enumerate(route_over_time):
+        print(i, current_route)
+    for current_route in route_over_time[-10:]:
         locations_to_render = [num_to_object[x] for x in current_route]
         generator.renderLocations(locations_to_render)
         time.sleep(3)
-    input()
+
+
     plt.plot(np.arange(0, no_of_generations), fitnesses)
     plt.ylabel('fitness')
     plt.xlabel('no. of generations')
@@ -198,3 +201,4 @@ def main():
 
 main()
 #Test commit
+#Test commit 2
