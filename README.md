@@ -2,9 +2,9 @@
 Visualising the TSM problem in the context of local pubs.
 
 # Genetic_algorithm
-```
+
 Call this function to run the code
-```
+
 
 ## Installing dependencies
 ```
