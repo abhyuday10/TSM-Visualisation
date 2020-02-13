@@ -132,15 +132,15 @@ def fitness_of_best_in_population(population, our_map):
     return fit
 
 
-def thanos(how_many_to_kill, population, our_map):
+def remove_from_pop(how_many_to_kill, population, our_map):
     ranked_pop = sort_population(population, our_map)
     survival_of_the_fittest = ranked_pop[: (len(population) - how_many_to_kill)]
 
     return np.array(survival_of_the_fittest)
 
 
-def fuck(population, our_map):
-    fittest = thanos(how_many_to_kill, population, our_map)
+def breeding(population, our_map):
+    fittest = remove_from_pop(how_many_to_kill, population, our_map)
     children = []
 
     keep = 4
@@ -187,9 +187,9 @@ def main():
     for i in range(0, no_of_generations):
         route.append(best_in_population(population, our_map))
         fitnesses.append(fitness_of_best_in_population(population, our_map))
-        fuck(population, our_map)
+        breeding(population, our_map)
 
-        population = fuck(population, our_map)
+        population = breeding(population, our_map)
 
     last = None
     for current_route in route:
