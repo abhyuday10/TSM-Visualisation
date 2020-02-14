@@ -13,7 +13,6 @@ class Location:
         self.name = name
 
     """Returns distance to location in meters
-
     Returns:
         Distance -- in meters
     """
@@ -41,7 +40,6 @@ class MapGenerator:
 
     """
     Function that geocodes and returns a list of Location objects from their names
-
     Returns:
         [Location object]
     """
@@ -49,6 +47,7 @@ class MapGenerator:
     def decodeLocations(self):
         self.locations = []
         for name in self.names:
+            print(name)
             g = geocoder.osm(name + ", " + RESTRICTEDTO)
             assert len(g) == 1, "This location is not in Leamington Spa: " + str(name)
             latitude, longitude = g.latlng[0], g.latlng[1]
