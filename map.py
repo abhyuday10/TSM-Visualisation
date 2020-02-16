@@ -47,7 +47,6 @@ class MapGenerator:
     def decodeLocations(self):
         self.locations = []
         for name in self.names:
-            print(name)
             g = geocoder.osm(name + ", " + RESTRICTEDTO)
             assert len(g) == 1, "This location is not in Leamington Spa: " + str(name)
             latitude, longitude = g.latlng[0], g.latlng[1]
