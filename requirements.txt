@@ -11,7 +11,7 @@ geocoder==1.38.1
 idna==2.8
 kiwisolver==1.1.0
 matplotlib==3.1.2
-numpy==1.18.1
+numpy==1.22.0
 pandas==1.0.0
 pathspec==0.7.0
 plotly==4.5.0
